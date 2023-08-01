@@ -1,4 +1,7 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
+import { BiTimeFive } from "react-icons/bi";
+import { AiOutlineCloseCircle, AiOutlineSearch } from "react-icons/ai";
+import { CiLocationOn } from "react-icons/ci";
 import google from "../../assets/google.svg";
 import adobe from "../../assets/adobe.svg";
 import airbnb from "../../assets/airbnb.svg";
@@ -7,17 +10,17 @@ import netflix from "../../assets/netflix.svg";
 import slack from "../../assets/slack.svg";
 import snapchat from "../../assets/snapchat.svg";
 import spotify from "../../assets/spotify.svg";
-import { BiTimeFive } from "react-icons/bi";
-import { AiOutlineCloseCircle, AiOutlineSearch } from "react-icons/ai";
-import { CiLocationOn } from "react-icons/ci";
 
 const Jobs = () => {
   const [userData, setUserData] = useState([]);
   const [userSearchData, setUserSearchData] = useState([]);
   const [title, setTitle] = useState("");
   const [location, setLocation] = useState("");
+  const titleRef = useRef(null);
+  const locationRef = useRef(null);
 
   useEffect(() => {
+    // Demo data for jobs
     const Data = [
       {
         id: 1,
@@ -100,39 +103,55 @@ const Jobs = () => {
   const handleChange = (e) => {
     e.preventDefault();
     const newData = userData
-      .filter((x) => x.title == (title == "" ? x.title : title))
-      .filter((y) => y.location == (location == "" ? y.location : location));
+      .filter((x) => x.title === (title === "" ? x.title : title))
+      .filter((y) => y.location === (location === "" ? y.location : location));
     setUserSearchData(newData);
   };
+
   return (
     <>
+      {/* SEARCH FUNCTIONALITY */}
       <div className="searchDiv grid gap-10 bg-grayish rounded-[10px] p-[3rem]">
         <form action="">
-          <div className="firstDiv flex justify-between items-center rounded-[8px] gap-[10px] bg-white shadow-lg  shadow-grayish-700">
-            <div className="flex gap-2 w-full items-center p-[20px]">
+          <div className="firstDiv grid gap-4 md:grid-cols-3 ">
+            <div className="inputContainer flex gap-2 items-center bg-white rounded-[8px] shadow-lg shadow-grayish-700 pl-2 ">
               <AiOutlineSearch className="text-[25px] icon" />
               <input
+                ref={titleRef}
                 type="text"
-                className="bg-transparent text-redish focus:outline-none w-[100%]"
+                className="bg-transparent text-redish p-[15px] focus:outline-none w-full"
                 placeholder="Search Job.."
+                value={title}
                 onChange={(e) => setTitle(e.target.value)}
               />
-              <AiOutlineCloseCircle className="text-[30px] text-[#a5a6a6] hover:text-textColor icon" />
+              {title && (
+                <AiOutlineCloseCircle
+                  onClick={() => setTitle("")}
+                  className="text-[30px] text-[#a5a6a6] hover:text-textColor pr-2 icon"
+                />
+              )}
             </div>
 
-            <div className="flex w-full gap-2 items-center p-[20px]">
+            <div className="inputContainer flex items-center bg-white rounded-[8px] shadow-lg shadow-grayish-700 pl-2">
               <CiLocationOn className="text-[25px] icon" />
               <input
+                ref={locationRef}
                 type="text"
-                className="bg-transparent text-redish focus:outline-none w-[100%]"
+                className="bg-transparent text-redish p-[15px] focus:outline-none pl-2 w-full"
                 placeholder="Search by location"
+                value={location}
                 onChange={(e) => setLocation(e.target.value)}
               />
-              <AiOutlineCloseCircle className="text-[30px] text-[#a5a6a6] hover:text-textColor icon" />
+              {location && (
+                <AiOutlineCloseCircle
+                  onClick={() => setLocation("")}
+                  className="text-[30px] text-[#a5a6a6] hover:text-textColor pr-2 icon"
+                />
+              )}
             </div>
 
             <button
-              className="bg-redish h-full w-full p-3 mr-[3px] px-10 rounded-[10px] text-white cursor-pointer hover:bg-red-300"
+              className="bg-redish h-full p-3 px-10 rounded-[10px] text-white cursor-pointer hover:bg-red-300 md:w-auto md:self-end"
               onClick={handleChange}
             >
               Search
@@ -140,7 +159,7 @@ const Jobs = () => {
           </div>
         </form>
       </div>
-
+      {/* JOBS ITEMS MAPPING FROM DATA  */}
       <div>
         <div className="jobContainer flex gap-10 justify-center flex-wrap items-center py-10">
           {userSearchData && userSearchData.length > 0
